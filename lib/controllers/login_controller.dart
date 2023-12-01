@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:prova_flutter_target/screens/capturaInfo.dart';
+import 'package:prova_flutter_target/screens/infoCapture.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController extends GetxController {
   final Dio dio;
-  TextEditingController userController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  var userController = TextEditingController();
+  var passwordController = TextEditingController();
+  final _prefs = SharedPreferences.getInstance();
 
   LoginController(this.dio);
 
@@ -37,7 +37,7 @@ class LoginController extends GetxController {
           await prefs.setString('token', token);
           userController.clear();
           passwordController.clear();
-          Get.off(() => const CapturaInfo());
+          Get.off(() => CapturaInfo());
         } else if (body['code'] == 1) {
           throw jsonDecode(response.data)['message'];
         }

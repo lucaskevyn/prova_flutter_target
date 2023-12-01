@@ -48,7 +48,8 @@ class _LoginState extends State<Login> {
               backgroundColor: Colors.transparent,
               body: SafeArea(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -101,7 +102,7 @@ class _LoginState extends State<Login> {
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(8.0))),
                                       errorStyle:
-                                          TextStyle(color: Colors.orangeAccent),
+                                          TextStyle(color: Colors.white),
                                     ),
                                   ),
                                 ),
@@ -155,7 +156,7 @@ class _LoginState extends State<Login> {
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(8.0))),
                                       errorStyle:
-                                          TextStyle(color: Colors.orangeAccent),
+                                          TextStyle(color: Colors.white),
                                     ),
                                   ),
                                 ),
@@ -196,18 +197,15 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                       ),
-                      Center(
-                        heightFactor: 2,
-                        child: TextButton(
-                          onPressed: () =>
-                              launchUrlString('https://www.google.com'),
-                          child: const Text(
-                            'Política de Privacidade',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400),
-                          ),
+                      TextButton(
+                        onPressed: () =>
+                            launchUrlString('https://www.google.com'),
+                        child: const Text(
+                          'Política de Privacidade',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400),
                         ),
                       )
                     ],
@@ -222,10 +220,10 @@ class _LoginState extends State<Login> {
   // Validar campo usuário
   String? validateUser(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Preencha o campo Usuário';
+      return '* Preencha o campo Usuário';
     }
     if (value.endsWith(' ')) {
-      return 'Este campo não pode terminar com o caractere espaço';
+      return '* Este campo não pode terminar com o caractere espaço';
     }
     return null;
   }
@@ -233,11 +231,11 @@ class _LoginState extends State<Login> {
   // Validar campo senha
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Preencha o campo Senha';
-    } else if (value.length <= 2) {
-      return 'A senha deve ter pelo menos 2 caracteres';
+      return '* Preencha o campo Senha';
+    } else if (value.length < 2) {
+      return '* A senha deve ter pelo menos 2 caracteres';
     } else if (value.endsWith(' ')) {
-      return 'Este campo não pode terminar com o caractere espaço';
+      return '* Este campo não pode terminar com o caractere espaço';
     }
     return null;
   }
