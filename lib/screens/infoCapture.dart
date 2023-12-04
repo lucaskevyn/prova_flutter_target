@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:prova_flutter_target/stores/notes.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class CapturaInfo extends StatefulWidget {
-  CapturaInfo({super.key});
+  const CapturaInfo({super.key});
 
   @override
   State<CapturaInfo> createState() => _CapturaInfoState();
@@ -13,24 +12,23 @@ class CapturaInfo extends StatefulWidget {
 
 class _CapturaInfoState extends State<CapturaInfo> {
   final _formKey = GlobalKey<FormState>();
-
   final noteStore = Notes();
-
   final noteController = TextEditingController();
-
   late FocusNode _focusNode;
+  bool isEditing = false;
+  late int editingIndex;
 
   @override
   void initState() {
     super.initState();
 
+    // Node para controlar o foco do textfield
     _focusNode = FocusNode();
     _focusNode.requestFocus();
   }
 
   @override
   void dispose() {
-    // Clean up the focus node when the Form is disposed.
     _focusNode.dispose();
 
     super.dispose();
@@ -79,7 +77,7 @@ class _CapturaInfoState extends State<CapturaInfo> {
                                             itemCount: noteStore.notes.length,
                                             itemBuilder: (context, index) {
                                               var note = noteStore.notes[index];
-                                              return savedText(note);
+                                              return savedText(index, note);
                                             },
                                           )),
                                 ),
@@ -92,10 +90,22 @@ class _CapturaInfoState extends State<CapturaInfo> {
                                 controller: noteController,
                                 focusNode: _focusNode,
                                 onFieldSubmitted: (value) {
-                                  if (_formKey.currentState!.validate()) {
-                                    noteStore.add(value);
-                                    noteController.clear();
-                                    _focusNode.requestFocus();
+                                  // Verificar se botão de edição foi acionado
+                                  if (isEditing) {
+                                    // Validar e editar texto
+                                    if (_formKey.currentState!.validate()) {
+                                      noteStore.update(editingIndex, value);
+                                      noteController.clear();
+                                      isEditing = false;
+                                      _focusNode.requestFocus();
+                                    }
+                                  } else {
+                                    // Validar e adicionar texto
+                                    if (_formKey.currentState!.validate()) {
+                                      noteStore.add(value);
+                                      noteController.clear();
+                                      _focusNode.requestFocus();
+                                    }
                                   }
                                 },
                                 validator: (value) => validateTextField(value),
@@ -151,7 +161,8 @@ class _CapturaInfoState extends State<CapturaInfo> {
     );
   }
 
-  Widget savedText(String item) {
+  // Widget dos itens de textos salvos
+  Widget savedText(int index, String item) {
     return Column(
       children: [
         Row(
@@ -168,13 +179,17 @@ class _CapturaInfoState extends State<CapturaInfo> {
               ),
             ),
             IconButton(
-                onPressed: () => {},
+                onPressed: () {
+                  noteController.text = item;
+                  isEditing = true;
+                  editingIndex = index;
+                },
                 icon: const Icon(
                   Icons.border_color,
                   size: 36,
                 )),
             IconButton(
-                onPressed: () => {},
+                onPressed: () => {showRemoveDialog(index)},
                 icon: Icon(
                   Icons.cancel,
                   color: Colors.red.shade800,
@@ -187,8 +202,36 @@ class _CapturaInfoState extends State<CapturaInfo> {
     );
   }
 
+  // Modal de confirmação de exclusão
+  showRemoveDialog(int index) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Remover'),
+            content: const Text('Deseja remover este item?'),
+            surfaceTintColor: Colors.white,
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancelar')),
+              TextButton(
+                  onPressed: () {
+                    noteStore.delete(index);
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Remover'))
+            ],
+          );
+        });
+  }
+
+  // Validar campo de texto
   String? validateTextField(String? value) {
     if (value == null || value.isEmpty) {
+      _focusNode.requestFocus();
       return '* Preencha o campo';
     }
     return null;

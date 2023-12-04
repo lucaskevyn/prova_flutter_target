@@ -16,7 +16,7 @@ class LoginController extends GetxController {
 
   Future<void> login() async {
     try {
-      // url fake p/ exemplo
+      // Url fake p/ exemplo
       var url = 'http://restapi.com/users/';
       Map body = {
         'user': userController.text,

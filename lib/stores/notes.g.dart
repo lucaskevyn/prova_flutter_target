@@ -39,6 +39,28 @@ mixin _$Notes on _Notes, Store {
   }
 
   @override
+  void delete(int index) {
+    final _$actionInfo =
+        _$_NotesActionController.startAction(name: '_Notes.delete');
+    try {
+      return super.delete(index);
+    } finally {
+      _$_NotesActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void update(int index, String item) {
+    final _$actionInfo =
+        _$_NotesActionController.startAction(name: '_Notes.update');
+    try {
+      return super.update(index, item);
+    } finally {
+      _$_NotesActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 notes: ${notes}

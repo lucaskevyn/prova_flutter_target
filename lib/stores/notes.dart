@@ -20,6 +20,18 @@ abstract class _Notes with Store {
     saveData();
   }
 
+  @action
+  void delete(int index) {
+    notes.removeAt(index);
+    saveData();
+  }
+
+  @action
+  void update(int index, String item) {
+    notes[index] = item;
+    saveData();
+  }
+
   loadPreferences() async {
     prefs = await SharedPreferences.getInstance();
     notes = ObservableList<String>.of(prefs.getStringList("notes") ?? []);
